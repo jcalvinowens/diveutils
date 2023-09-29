@@ -1,0 +1,116 @@
+diveutils: A random collection of little programs related to diving
+
+================================================================================
+
+DISCLAIMER: THESE ARE EDUCATIONAL TOYS. DO NOT UNDER ANY CIRCUMSTANCES USE THEM
+	    FOR REAL DIVES OR REAL ASCENTS TO ALTITUDE AFTER DIVING.
+
+================================================================================
+
+Internally, all pressures are in Bar, and all times are in seconds.
+
+The calculations assume square profiles and instant depth changes, so in general
+they should give overestimates of loading.
+
+The programs are all configurable with the following arguments:
+
+	-g:	Change the GF-Hi used to compute ceilings (default 100)
+	-a:	Change the surface pressure (default 1.013bar)
+	-p:	Change PPN2 for calculations (default 0.79 (air))
+	-m:	Change the model used (default "Buhlmann ZH-L16C Nitrogen")
+	-n:	Show negative pressures, instead of just displaying zero
+
+When changing the PPN2 setting, we assume air is breathed during surface
+intervals (any vector where ambiant pressure is >= surface pressure).
+
+-------------------
+Altitude Calculator
+-------------------
+
+This tool uses a set of dives and surface intervals you provide to calculate
+minimum ambiant pressures tolerable without exceeding the M-values (+GF) for
+various Haldanian decompression models.
+
+To use the tool, simply provide a series of "TIME DEPTH" pairs on the command
+line (meters and feet are supported). For example:
+
+	{0}[calvin ~] ./altitude-calculator -p 0.68 :40 66ft 1:19 0ft \
+		:45 77ft 1:58 0ft :40 87ft 1:51 0ft :36 92ft 3:25 0ft \
+		:44 69ft 10:27 0ft :31 92ft 1:21 0ft :35 87ft 2:15 0ft \
+		:51 59ft 3: 0ft
+	00> '   :40   66ft' =>    2400s at  2.064 bar
+	01> '  1:19    0ft' =>    4740s at  0.800 bar
+	02> '   :45   77ft' =>    2700s at  2.293 bar
+	03> '  1:58    0ft' =>    7080s at  0.800 bar
+	04> '   :40   87ft' =>    2400s at  2.502 bar
+	05> '  1:51    0ft' =>    6660s at  0.800 bar
+	06> '   :36   92ft' =>    2160s at  2.606 bar
+	07> '  3:25    0ft' =>   12300s at  0.800 bar
+	08> '   :44   69ft' =>    2640s at  2.127 bar
+	09> ' 10:27    0ft' =>   37620s at  0.800 bar
+	10> '   :31   92ft' =>    1860s at  2.606 bar
+	11> '  1:21    0ft' =>    4860s at  0.800 bar
+	12> '   :35   87ft' =>    2100s at  2.502 bar
+	13> '  2:15    0ft' =>    8100s at  0.800 bar
+	14> '   :51   59ft' =>    3060s at  1.918 bar
+	15> '    3:    0ft' =>   10800s at  0.800 bar
+	Computing loads...
+	Computing ceilings...
+	Load: 0.751 Ceil: 0.000   infft   infm
+	Load: 0.751 Ceil: 0.000   infft   infm
+	Load: 0.751 Ceil: 0.000   infft   infm
+	Load: 0.751 Ceil: 0.000   infft   infm
+	Load: 0.752 Ceil: 0.000   infft   infm
+	Load: 0.759 Ceil: 0.000   infft   infm
+	Load: 0.778 Ceil: 0.193 39375ft 12001m
+	Load: 0.812 Ceil: 0.336 27530ft  8391m
+	Load: 0.855 Ceil: 0.461 20245ft  6171m
+	Load: 0.898 Ceil: 0.565 15286ft  4659m
+	Load: 0.926 Ceil: 0.643 12055ft  3674m
+	Load: 0.942 Ceil: 0.697  9998ft  3047m
+	Load: 0.951 Ceil: 0.744  8288ft  2526m
+	Load: 0.955 Ceil: 0.785  6877ft  2096m
+	Load: 0.957 Ceil: 0.825  5590ft  1704m
+	Load: 0.956 Ceil: 0.846  4893ft  1491m
+	Load: 0.951 Ceil: 0.866  4287ft  1307m
+
+--------------
+NDL Calculator
+--------------
+
+This tool computes how much time its possible to spend at a given ambiant
+pressure before returning to the surface would exceed the M-value (+GF)
+calculated by the choosen model.
+
+To use the tool, simply provide a series of "TIME DEPTH" pairs on the command
+line (meters and feet are supported). For example, this computes GF70 NDLS at
+100ft after spending 5 minutes at 100ft:
+
+	{0}[calvin ~] ./ndl-calculator -g 70 :5 100ft -d 100ft
+	Using GF-Hi 70%
+	Using depth pressure of 3.064 ('100ft')
+	00> '    :5  100ft' =>     300s at  3.221 bar
+	Computing loads...
+	Computing NDLs at 3.221 for surface pressure 0.800...
+	Load: 2.175 NDL: 192s
+	Load: 1.986 NDL: 155s
+	Load: 1.634 NDL: 182s
+	Load: 1.374 NDL: 250s
+	Load: 1.205 NDL: 323s
+	Load: 1.086 NDL: 408s
+	Load: 1.005 NDL: 476s
+	Load: 0.947 NDL: 615s
+	Load: 0.905 NDL: 823s
+	Load: 0.874 NDL: 1118s
+	Load: 0.856 NDL: 1423s
+	Load: 0.844 NDL: 1737s
+	Load: 0.834 NDL: 2087s
+	Load: 0.827 NDL: 2486s
+	Load: 0.821 NDL: 2922s
+	Load: 0.817 NDL: 3542s
+	Load: 0.813 NDL: 4234s
+
+These numbers are weird because we don't account for the ascent at all: your
+fancy dive computer assumes some maximal ascent rate when it calculates this
+number for you, so the fast tissues don't limit your diving nearly as much as
+they limit the results of this tool.
