@@ -1,4 +1,4 @@
-#!/usr/bin/python3
+#!/usr/bin/env python3
 
 # Script to convert model constants to internal units
 # Copyright (C) 2017 Calvin Owens <jcalvinowens@gmail.com>

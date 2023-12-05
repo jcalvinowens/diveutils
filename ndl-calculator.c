@@ -18,7 +18,10 @@
 #include <stdio.h>
 #include <unistd.h>
 #include <getopt.h>
+
+#ifdef __linux__
 #include <alloca.h>
+#endif
 
 #include "args.h"
 #include "haldanian.h"
